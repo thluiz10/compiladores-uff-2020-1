@@ -2,5 +2,5 @@
 
 Christiano Braga
 
-Instituto de Computação
-UFF
+Instituto de Computação__
+Universidade Federal Fluminense
