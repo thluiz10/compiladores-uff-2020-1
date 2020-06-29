@@ -23,7 +23,6 @@
 @@keyword :: 'skip'
 @@keyword :: '{' '}'
 
-
 start = [ds:decSeq] [cs:cmd_seq] $ ;
 
 exp = paren_exp | bin_exp | un_exp | @:atom ;

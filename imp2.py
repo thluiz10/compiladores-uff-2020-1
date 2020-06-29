@@ -98,6 +98,8 @@ def main(argv):
     if print_ast:
         try:
             ast = parser.parse(source)
+            print(ast)
+            exit(1)
             print('Concrete syntax tree: ')            
             pprint.pprint(ast, indent=2, width=20)
             if terminate:
