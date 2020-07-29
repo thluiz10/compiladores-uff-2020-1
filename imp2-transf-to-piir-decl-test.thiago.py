@@ -40,17 +40,17 @@ class TestImpToPiIRDecl(unittest.TestCase):
 
     def test_run(self):
         # Qual o menor estado que no qual fiboncci n está calculado?
-        s = 33
+        s = 679
         # Qual o estado do componente locs (BlockLocs) em s?
-        locs = "[0, 1, 2, 3]"
+        locs = "[4]"
         # Qual o estado do componente env (Ambiente) em s?
-        env = "{'n': 0, 'i': 1, 'j': 2, 'k': 3}"
+        env = "{'n': 0, 'i': 1, 'j': 2, 'k': 3, 't': 4}"
         # Qual o estado do componente sto (Memória) em s?
-        sto = "{0: 20, 1: 0, 2: 1, 3: 1}"
+        sto = "{0: 20, 1: 2584, 2: 4181, 3: 19, 4: 6765}"
         # Qual o estado do componente val (Pilha de valores) em s?
-        val = "[[], {}]"
+        val = "[[], {}, [0, 1, 2, 3], {'n': 0, 'i': 1, 'j': 2, 'k': 3}]"
         # Qual o estado do componente cnt (Pilha de controle) em s?
-        cnt = "['#BLKCMD', Loop(Lt(Id(k), Id(n)), Blk(Bind(Id(t), Ref(Num(0))), CSeq(CSeq(CSeq(Assign(Id(t), Sum(Id(i), Id(j))), Assign(Id(i), Id(j))), Assign(Id(j), Id(t))), Assign(Id(k), Sum(Id(k), Num(1)))))), Blk(Bind(Id(t), Ref(Num(0))), CSeq(CSeq(CSeq(Assign(Id(t), Sum(Id(i), Id(j))), Assign(Id(i), Id(j))), Assign(Id(j), Id(t))), Assign(Id(k), Sum(Id(k), Num(1)))))]"
+        cnt = "['#BLKCMD', Loop(Lt(Id(k), Id(n)), Blk(Bind(Id(t), Ref(Num(0))), CSeq(CSeq(CSeq(Assign(Id(t), Sum(Id(i), Id(j))), Assign(Id(i), Id(j))), Assign(Id(j), Id(t))), Assign(Id(k), Sum(Id(k), Num(1)))))), '#BLKCMD', Assign(Id(k), Sum(Id(k), Num(1))), Assign(Id(j), Id(t)), Assign(Id(i), Id(j))]"
         self.__test_run('examples/fibo.imp2', s, locs, env, sto, val, cnt)
         
 if __name__ == '__main__':
