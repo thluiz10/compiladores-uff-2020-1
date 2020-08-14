@@ -38,10 +38,24 @@ class TestImpToPiIRAbs(unittest.TestCase):
     def test_fat(self):
         self.__test_parse('examples/fat.imp2', "Blk(DSeq(Bind(Id(z), Ref(1)), BindAbs(Id(fat), Abs([Id(x)], Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop()))))), Call(Id(fat), [10]))")
 
-
     def test_regra_35(self):
         # Em qual estado a regra 35 (slide 30) é aplicada no exemplo do fatorial?
-        s = 0
+        s = 8
+        # Qual o estado do componente locs (BlockLocs) em s?
+        locs = "[0]"
+        # Qual o estado do componente env (Ambiente) em s?
+        env = "{}"
+        # Qual o estado do componente sto (Memória) em s?
+        sto = "{0: 1}"
+        # Qual o estado do componente val (Pilha de valores) em s?
+        val = "[[], Call(Id(fat), [10]), {'z': 0}, Id(fat), {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}]"
+        # Qual o estado do componente cnt (Pilha de controle) em s?
+        cnt = "['#BLKDEC', '#DSEQ', '#BIND']"
+        self.__test_run('examples/fat.imp2', s, locs, env, sto, val, cnt)
+
+    def test_regra_menor_36(self):
+        # Qual o menor estado no qual a regra 36 (slide 30) é aplicada no exemplo do fatorial?
+        s = 12
         # Qual o estado do componente locs (BlockLocs) em s?
         locs = "[0]"
         # Qual o estado do componente env (Ambiente) em s?
@@ -49,29 +63,14 @@ class TestImpToPiIRAbs(unittest.TestCase):
         # Qual o estado do componente sto (Memória) em s?
         sto = "{0: 1}"
         # Qual o estado do componente val (Pilha de valores) em s?
-        val = "[[], {}]"
+        val = "[[], {}, Id(fat)]"
         # Qual o estado do componente cnt (Pilha de controle) em s?
-        cnt = "['#BLKCMD', Call(Id(fat), [10])]"
-        self.__test_run('examples/fat.imp2', s, locs, env, sto, val, cnt)
-
-    def test_regra_menor_36(self):
-        # Qual o menor estado no qual a regra 36 (slide 30) é aplicada no exemplo do fatorial?
-        s = 0
-        # Qual o estado do componente locs (BlockLocs) em s?
-        locs = "[]"
-        # Qual o estado do componente env (Ambiente) em s?
-        env = "{'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 10}"
-        # Qual o estado do componente sto (Memória) em s?
-        sto = "{0: 10}"
-        # Qual o estado do componente val (Pilha de valores) em s?
-        val = "?"
-        # Qual o estado do componente cnt (Pilha de controle) em s?
-        cnt = "[? " + "'#CALL', Sub(Id(x), 1)]"
+        cnt = "['#BLKCMD', '#CALL', 10]"
         self.__test_run('examples/fat.imp2', s, locs, env, sto, val, cnt)
 
     def test_regra_maior_36(self):
         # Qual o maior estado no qual a regra 36 (slide 30) é aplicada no exemplo do fatorial?
-        s = 0
+        s = 219
         # Qual o estado do componente locs (BlockLocs) em s?
         locs = "[]"
         # Qual o estado do componente env (Ambiente) em s?
@@ -79,42 +78,40 @@ class TestImpToPiIRAbs(unittest.TestCase):
         # Qual o estado do componente sto (Memória) em s?
         sto = "{0: 3628800}"
         # Qual o estado do componente val (Pilha de valores) em s?
-        val = "?"
+        val = "[[], {}, [0], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}}, [0], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 10}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 10}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 10}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 9}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 9}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 9}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 8}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 8}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 8}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 7}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 7}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 7}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 6}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 6}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 6}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 5}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 5}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 5}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 4}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 4}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 4}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 3}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 3}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 3}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 2}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 2}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 2}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 1}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 1}, Id(fat)]"
         # Qual o estado do componente cnt (Pilha de controle) em s?
-        cnt = "[? " + "'#CALL', Sub(Id(x), 1)]"
+        cnt = "['#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#CALL', Sub(Id(x), 1)]"
         self.__test_run('examples/fat.imp2', s, locs, env, sto, val, cnt)
 
     def test_regra_menor_37(self):
         # Qual o menor estado no qual a regra 36 (slide 30) é aplicada no exemplo do fatorial?
-        s = 0
+        s = 14
         # Qual o estado do componente locs (BlockLocs) em s?
-        locs = "?"
+        locs = "[0]"
         # Qual o estado do componente env (Ambiente) em s?
         env = "{'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 10}"
         # Qual o estado do componente sto (Memória) em s?
-        sto = "?"
+        sto = "{0: 1}"
         # Qual o estado do componente val (Pilha de valores) em s?
-        val = "?"
+        val = "[[], {}, [0], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}}]"
         # Qual o estado do componente cnt (Pilha de controle) em s?
-        cnt = "[?" + "Blk(?)]"
+        cnt = "['#BLKCMD', '#BLKCMD', Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop()))]"
         self.__test_run('examples/fat.imp2', s, locs, env, sto, val, cnt)
 
     def test_regra_maior_37(self):
         # Qual o maior estado no qual a regra 36 (slide 30) é aplicada no exemplo do fatorial?
-        s = 0
+        s = 224
         # Qual o estado do componente locs (BlockLocs) em s?
         locs = "[]"
         # Qual o estado do componente env (Ambiente) em s?
         env = "{'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 0}"
         # Qual o estado do componente sto (Memória) em s?
-        sto = "{0: ?}"
+        sto = "{0: 3628800}"
         # Qual o estado do componente val (Pilha de valores) em s?
-        val = "?"
+        val = "[[], {}, [0], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}}, [0], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 10}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 10}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 10}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 9}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 9}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 9}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 8}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 8}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 8}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 7}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 7}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 7}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 6}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 6}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 6}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 5}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 5}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 5}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 4}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 4}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 4}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 3}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 3}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 3}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 2}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 2}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 2}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 1}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 1}, [], {'z': 0, 'fat': {'for': [Id(x)], 'block': Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop())), 'env': {}}, 'x': 1}]"
         # Qual o estado do componente cnt (Pilha de controle) em s?
-        cnt = "[? '#BLKCMD', Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop()))]"
+        cnt = "['#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', '#BLKCMD', Blk(Cond(Gt(Id(x), 0), Blk(CSeq(Assign(Id(z), Mul(Id(z), Id(x))), Call(Id(fat), [Sub(Id(x), 1)]))), Nop()))]"
         self.__test_run('examples/fat.imp2', s, locs, env, sto, val, cnt)
 
-
-        
 if __name__ == '__main__':
     unittest.main()
